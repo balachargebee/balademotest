@@ -17,7 +17,7 @@ async function clearProductCatalog() {
 async function loadLatestProductCatalog() {
   const cb = new ChargeBee();
   cb.configure({
-    site: process.env.NEXT_PUBLIC_CHARGEBEE_SITE_ID,
+    site: process.env.NEXT_PUBLIC_CHARGEBEE_SITE,
     api_key: process.env.CHARGEBEE_API_KEY,
   });
   const plans = await cb.item
