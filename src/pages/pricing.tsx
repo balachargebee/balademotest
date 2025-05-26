@@ -27,10 +27,18 @@ export async function getStaticProps(
     ctx,
     transformer: superjson,
   });
-  const [items, itemPrices] = await Promise.all([
-    ssg.pricing.getAllItems.fetch(),
-    ssg.pricing.getAllItemPrices.fetch(),
-  ]);
+
+  let items: Item[] = [];
+  let itemPrices: ItemPrice[] = [];
+
+  try {
+    [items, itemPrices] = await Promise.all([
+      ssg.pricing.getAllItems.fetch(),
+      ssg.pricing.getAllItemPrices.fetch(),
+    ]);
+  } catch (error) {
+    console.error("❌ Error fetching pricing data:", error);
+  }
 
   return {
     props: {
