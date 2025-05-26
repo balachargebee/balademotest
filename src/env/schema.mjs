@@ -33,6 +33,3 @@ export const serverEnv = {
   GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
   GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET
 };
-
-// 👇 Add this line to fix the build
-export { clientEnv };
