@@ -24,5 +24,5 @@ export const CHARGEBEE_WEBHOOKS_REQUEST_ORIGINS = [
   "54.84.202.184",
 ];
 
-export const SITE_ID = env.NEXT_PUBLIC_CHARGEBEE_SITE_ID;
+export const SITE_ID = env.NEXT_PUBLIC_CHARGEBEE_SITE;
 export const API_KEY = env.CHARGEBEE_API_KEY;
