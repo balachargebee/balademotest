@@ -86,7 +86,7 @@ export default function Pricing({ items = [], itemPrices = [] }: Props) {
             Create them in your{" "}
             <a
               className="text-primary underline"
-              href={`https://${env.NEXT_PUBLIC_CHARGEBEE_SITE_ID}.chargebee.com/plans`}
+              href={`https://${env.NEXT_PUBLIC_CHARGEBEE_SITE}.chargebee.com/plans`}
               rel="noopener noreferrer"
               target="_blank"
             >
