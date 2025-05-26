@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+// ✅ Client schema — for use in browser code (must start with NEXT_PUBLIC_)
 export const clientSchema = z.object({
   NEXT_PUBLIC_FIREBASE_API_KEY: z.string(),
   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: z.string(),
@@ -7,10 +8,7 @@ export const clientSchema = z.object({
   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: z.string(),
   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: z.string(),
   NEXT_PUBLIC_FIREBASE_APP_ID: z.string(),
-
-  // Chargebee
-  NEXT_PUBLIC_CHARGEBEE_SITE: z.string(),
-  NEXT_PUBLIC_CHARGEBEE_API_KEY: z.string()
+  NEXT_PUBLIC_CHARGEBEE_SITE: z.string()
 });
 
 export const clientEnv = {
@@ -20,7 +18,14 @@ export const clientEnv = {
   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   NEXT_PUBLIC_FIREBASE_APP_ID: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  NEXT_PUBLIC_CHARGEBEE_SITE: process.env.NEXT_PUBLIC_CHARGEBEE_SITE
+};
 
-  NEXT_PUBLIC_CHARGEBEE_SITE: process.env.NEXT_PUBLIC_CHARGEBEE_SITE,
-  NEXT_PUBLIC_CHARGEBEE_API_KEY: process.env.NEXT_PUBLIC_CHARGEBEE_API_KEY
+// ✅ Server schema — for secrets like API keys
+export const serverSchema = z.object({
+  CHARGEBEE_API_KEY: z.string()
+});
+
+export const serverEnv = {
+  CHARGEBEE_API_KEY: process.env.CHARGEBEE_API_KEY
 };
