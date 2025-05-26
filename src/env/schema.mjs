@@ -25,11 +25,13 @@ export const clientEnv = {
 export const serverSchema = z.object({
   CHARGEBEE_API_KEY: z.string(),
   GITHUB_CLIENT_ID: z.string(),
-  GITHUB_CLIENT_SECRET: z.string()
+  GITHUB_CLIENT_SECRET: z.string(),
+  NODE_ENV: z.enum(["development", "test", "production"])
 });
 
 export const serverEnv = {
   CHARGEBEE_API_KEY: process.env.CHARGEBEE_API_KEY,
   GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
-  GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET
+  GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
+  NODE_ENV: process.env.NODE_ENV
 };
