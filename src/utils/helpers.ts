@@ -12,7 +12,7 @@ export const getURL = () => {
 
 export function initChargebee() {
   return window.Chargebee.init({
-    site: process.env.NEXT_PUBLIC_CHARGEBEE_SITE_ID,
+    site: process.env.NEXT_PUBLIC_CHARGEBEE_SITE,
     isItemsModel: true,
   });
 }
