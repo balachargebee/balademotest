@@ -55,18 +55,18 @@ export default function LandingPage() {
         <div className="flex cursor-default flex-col items-center">
           <h1 className="text-center text-8xl font-bold text-gray-200">
             <span
-              className="bg-clip-text 
-							text-primary transition hover:brightness-125"
+              className="bg-clip-text
+                                                        text-primary transition hover:brightness-125"
             >
-              Chargebee
+              Subscribe
             </span>{" "}
-            Subscriptions
+            to The Week
           </h1>
           <h1
-            className="bg-gradient-to-b from-gray-200 to-gray-400 bg-clip-text text-8xl 
-						font-bold text-transparent transition hover:brightness-125"
+            className="bg-gradient-to-b from-gray-200 to-gray-400 bg-clip-text text-8xl
+                                                font-bold text-transparent transition hover:brightness-125"
           >
-            made simpler
+            with Chargebee
           </h1>
         </div>
         <div className="mb-8" />
@@ -115,10 +115,10 @@ export default function LandingPage() {
 
           <Link
             href="/pricing"
-            className="flex h-12 flex-row items-center rounded-xl bg-primary px-6 text-base font-bold 
-						text-gray-100 transition hover:scale-105 hover:brightness-125 active:opacity-80"
+            className="flex h-12 flex-row items-center rounded-xl bg-primary px-6 text-base font-bold
+                                                text-gray-100 transition hover:scale-105 hover:brightness-125 active:opacity-80"
           >
-            Try Template
+            View Plans
           </Link>
         </div>
       </div>

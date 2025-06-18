@@ -24,7 +24,8 @@ async function loadLatestProductCatalog() {
     .list({
       "type[is]": "plan",
       "status[is]": "active",
-      "item_family_id[is]": "cbdemo_pf_analytics",
+      "item_family_id[is]":
+        process.env.CHARGEBEE_ITEM_FAMILY_ID || "cbdemo_pf_analytics",
       limit: 3,
     })
     .request()
@@ -46,7 +47,8 @@ async function loadLatestProductCatalog() {
       "item_id[in]": `[${plans.map((p) => p.id).join(",")}]`,
       "item_type[is]": "plan",
       "status[is]": "active",
-      "item_family_id[is]": "cbdemo_pf_analytics",
+      "item_family_id[is]":
+        process.env.CHARGEBEE_ITEM_FAMILY_ID || "cbdemo_pf_analytics",
       limit: 100,
     })
     .request()

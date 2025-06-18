@@ -112,8 +112,9 @@ export default function Pricing({ items = [], itemPrices = [] }: Props) {
             Pricing
           </h1>
           <p className="m-auto mt-5 max-w-2xl text-xl text-zinc-200 sm:text-center sm:text-2xl">
-            Start building for free, then add a site plan to go live. Account
-            plans unlock additional features.
+            Choose the best <span className="font-semibold">Print</span> or
+            <span className="font-semibold">Digital</span> plan for
+            <em>The Week</em> magazine.
           </p>
           <div className="relative mt-6 flex self-center rounded-lg border border-zinc-800 bg-zinc-900 p-0.5 sm:mt-8">
             <button
