@@ -2,6 +2,13 @@
 
 A Chargebee focused T3 Stack that integrates User Subscriptions, Authentication and Testing. Driven by Prisma ORM. Deploys to Vercel
 
+## The Week Demo
+
+Configure this project as a self-service demo for **The Week** magazine.
+Set `CHARGEBEE_ITEM_FAMILY_ID` in your `.env` file to the item family
+containing the **Print** and **Digital** plans. Then run `npm run seed`
+to fetch the plans from Chargebee and populate the local database.
+
 ## Features
 
 - Full stack typesafety with t3-stack.
