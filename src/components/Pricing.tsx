@@ -1,252 +1,235 @@
-import cn from "classnames";
-import { useRouter } from "next/router";
-import { useState } from "react";
-import Button from "@/components/ui/Button";
-import Script from "next/script";
-import type { Item, ItemPrice } from "@prisma/client";
-import { ChargebeePeriodUnit } from "@prisma/client";
-import { useSession } from "next-auth/react";
-import { env } from "@/env/client.mjs";
-import { trpc } from "@/utils/trpc";
-import { initChargebee } from "@/utils/helpers";
+import Head from "next/head";
+import React from "react";
 
-interface Props {
-  items: Item[];
-  itemPrices: ItemPrice[];
-}
-
-declare global {
-  interface Window {
-    // Chargebee.js must be loaded directly from https://js.chargebee.com/v2/chargebee.js, which
-    // places a `Chargebee` object on the window
-    Chargebee?: any;
-    cbInstance?: any;
-  }
-}
-
-export default function Pricing({ items = [], itemPrices = [] }: Props) {
-  const router = useRouter();
-  const [priceIdLoading, setPriceIdLoading] = useState<string>();
-  const { data: session } = useSession();
-  const [periodUnit, setPeriodUnit] = useState<ChargebeePeriodUnit>(
-    ChargebeePeriodUnit.month
-  );
-
-  const itemPricesToDisplay = itemPrices
-    .filter((item) => item.periodUnit === periodUnit)
-    .sort((a, b) => a.price - b.price);
-
-  const { mutateAsync: createCheckoutSession } =
-    trpc.subscription.createCheckoutSession.useMutation();
-
-  const { data: subscription } = trpc.subscription.getSubscription.useQuery(
-    undefined,
-    {
-      enabled: Boolean(session),
-    }
-  );
-
-  const getItem = (itemId: string) => items.find((i) => i.id === itemId);
-
-  const handlePortal = () => {
-    router.push("/settings/billing");
-  };
-
-  const handleCheckout = async (itemPrice: ItemPrice) => {
-    if (!session?.user) {
-      return router.push("/auth/signin");
-    }
-
-    setPriceIdLoading(itemPrice.id);
-
-    window.cbInstance?.openCheckout({
-      hostedPage: async () => {
-        const hostedPage = await createCheckoutSession({
-          itemPriceId: itemPrice.id,
-        });
-        return hostedPage;
-      },
-      success() {
-        alert(
-          "Successfully created/updated subscription. It'll take sometime to update in the app"
-        );
-      },
-      close: () => {
-        setPriceIdLoading("");
-      },
-    });
-  };
-
-  if (!itemPrices.length)
-    return (
-      <section className="bg-black">
-        <div className="mx-auto max-w-6xl py-8 px-4 sm:py-24 sm:px-6 lg:px-8">
-          <p className="mt-12 text-2xl font-extrabold text-white sm:text-center sm:text-3xl">
-            No subscription pricing plans found. <br />
-            Create them in your{" "}
-            <a
-              className="text-primary underline"
-              href={`https://${env.NEXT_PUBLIC_CHARGEBEE_SITE}.chargebee.com/plans`}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Chargbee Web Console
-            </a>
-            .
-          </p>
-        </div>
-      </section>
-    );
-
+export default function PCGamerLanding() {
   return (
-    <section className="bg-black">
-      <Script
-        src="https://js.chargebee.com/v2/chargebee.js"
-        onLoad={() => {
-          window.cbInstance = initChargebee();
-        }}
-      />
-      <div className="mx-auto max-w-6xl py-8 px-4 sm:py-24 sm:px-6 lg:px-8">
-        <div className="sm:align-center sm:flex sm:flex-col">
-          <h1 className="text-4xl font-extrabold text-primary sm:text-center sm:text-6xl">
-            Pricing
-          </h1>
-          <p className="m-auto mt-5 max-w-2xl text-xl text-zinc-200 sm:text-center sm:text-2xl">
-            Choose the best <span className="font-semibold">Print</span> or
-            <span className="font-semibold">Digital</span> plan for
-            <em>The Week</em> magazine.
-          </p>
-          <div className="relative mt-6 flex self-center rounded-lg border border-zinc-800 bg-zinc-900 p-0.5 sm:mt-8">
-            <button
-              onClick={() => setPeriodUnit(ChargebeePeriodUnit.month)}
-              type="button"
-              className={`${
-                periodUnit === ChargebeePeriodUnit.month
-                  ? "relative w-1/2 border-zinc-800 bg-primary text-white shadow-sm"
-                  : "relative ml-0.5 w-1/2 border border-transparent text-zinc-400"
-              } m-1 whitespace-nowrap rounded-md py-2 text-sm font-medium focus:z-10 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 sm:w-auto sm:px-8`}
-            >
-              Monthly billing
-            </button>
-            <button
-              onClick={() => setPeriodUnit(ChargebeePeriodUnit.year)}
-              type="button"
-              className={`${
-                periodUnit === ChargebeePeriodUnit.year
-                  ? "relative w-1/2 border-zinc-800 bg-primary text-white shadow-sm"
-                  : "relative ml-0.5 w-1/2 border border-transparent text-zinc-400"
-              } m-1 whitespace-nowrap rounded-md py-2 text-sm font-medium focus:z-10 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 sm:w-auto sm:px-8`}
-            >
-              Yearly billing
-            </button>
-          </div>
-        </div>
-        <div className="mt-12 space-y-4 sm:mt-16 sm:grid sm:grid-cols-2 sm:gap-6 sm:space-y-0 lg:mx-auto lg:max-w-3xl xl:mx-0 xl:max-w-none xl:grid-cols-3">
-          {itemPricesToDisplay.map((itemPrice, idx) => {
-            const priceString = new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: itemPrice.currencyCode,
-              minimumFractionDigits: 0,
-            }).format((itemPrice.price || 0) / 100);
+    <>
+      <Head>
+        <title>PC Gamer Subscription Offers</title>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap"
+          rel="stylesheet"
+        />
+      </Head>
 
-            const item = getItem(itemPrice.itemId);
+      <style jsx global>{`
+        body {
+          font-family: 'Inter', sans-serif;
+          background-color: #FFFFFF;
+          color: #1f2937;
+        }
+        .pc-gamer-header {
+          background-color: #CC0000;
+          padding-top: 1rem;
+          padding-bottom: 1rem;
+        }
+        .pc-gamer-header h1 {
+          color: #FFFFFF;
+        }
+        .pc-gamer-red {
+          background-color: #CC0000;
+        }
+        .pc-gamer-red-text {
+          color: #CC0000;
+        }
+        .pc-gamer-red-border {
+          border-color: #CC0000;
+        }
+        .card {
+          background-color: #FFFFFF;
+          border: 1px solid #D1D5DB;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .subscribe-button {
+          background-color: #CC0000;
+          color: #FFFFFF;
+          transition: background-color 0.3s ease;
+        }
+        .subscribe-button:hover {
+          background-color: #E60000;
+        }
+        .great-value-banner {
+          background-color: #CC0000;
+          color: white;
+          padding: 4px 12px;
+          font-size: 0.8rem;
+          font-weight: bold;
+          text-transform: uppercase;
+          position: absolute;
+          top: -15px;
+          left: 50%;
+          transform: translateX(-50%);
+          border-radius: 4px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+        .magazine-placeholder img {
+          border: 2px solid #e5e7eb;
+          width: 180px;
+          height: 250px;
+          object-fit: cover;
+        }
+        .payment-plan-box {
+          background-color: #f3f4f6;
+        }
+      `}</style>
 
-            return (
-              <div
-                key={itemPrice.id}
-                className={cn(
-                  "divide-y divide-zinc-600 rounded-lg bg-zinc-900 shadow-sm"
-                )}
-              >
-                <div className="p-6">
-                  <h2 className="text-2xl font-semibold leading-6 text-white">
-                    {item?.name || itemPrice.name}
-                  </h2>
-                  <p
-                    className="mt-4 text-zinc-300"
-                    style={{ minHeight: "84px" }}
-                  >
-                    {item?.description || itemPrice.description}
-                  </p>
-                  <p className="mt-12">
-                    <span className="white text-5xl font-extrabold">
-                      {priceString}
-                    </span>
-                    <span className="text-base font-medium text-zinc-100">
-                      /{periodUnit}
-                    </span>
-                  </p>
-                  <div>
-                    <Button
-                      variant="slim"
-                      loading={priceIdLoading === itemPrice.id}
-                      className="mt-8 block w-full rounded-md py-2 text-center text-sm font-semibold hover:border-primary hover:bg-zinc-900"
-                      onClick={() =>
-                        Boolean(subscription)
-                          ? handlePortal()
-                          : handleCheckout(itemPrice)
-                      }
-                    >
-                      {subscription?.itemPriceId === itemPrice.id
-                        ? "Manage"
-                        : "Subscribe"}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+      <header className="pc-gamer-header text-center mb-10 relative">
+        <div className="absolute top-4 right-4 text-white text-xs md:text-sm">
+          Welcome, <span className="font-semibold">Bala</span>
         </div>
-        <div>
-          <p className="mt-24 text-center text-xs font-bold uppercase tracking-[0.3em] text-zinc-400">
-            Brought to you by
-          </p>
-          <div className="my-12 flex flex-col items-center space-y-4 sm:mt-8 sm:grid sm:grid-cols-3 sm:gap-6 sm:space-y-0 md:mx-auto md:max-w-2xl">
-            <div className="flex items-center justify-start">
-              <a
-                target="_blank"
-                href="https://nextjs.org"
-                rel="noreferrer"
-                aria-label="Next.js Link"
-              >
-                <img
-                  src="/nextjs.svg"
-                  alt="Next.js Logo"
-                  className="h-12 text-white"
-                />
-              </a>
+        <h1 className="text-5xl md:text-6xl font-black uppercase tracking-tight">
+          PC GAMER
+        </h1>
+      </header>
+      <p className="text-gray-600 text-center -mt-8 mb-12 text-lg">
+        Magazine Subscription Offers
+      </p>
+
+      <main className="container mx-auto px-4 py-8">
+        <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+          Choose Your Preferred Subscription Package:
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+
+          {/* Single Issue */}
+          <div className="card rounded-lg p-6 flex flex-col items-center text-center relative">
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">Single Issue</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              (Print magazine delivered to your door)
+            </p>
+            <div className="magazine-placeholder my-4">
+              <img
+                src="https://i.imgur.com/L6VkG2f.png"
+                alt="PC Gamer Magazine - The Witcher 3 Anniversary Special Cover"
+                className="rounded shadow-lg mx-auto"
+                onError={(e) =>
+                  ((e.target as HTMLImageElement).src =
+                    'https://placehold.co/180x250/e0e0e0/777777?text=Image+Error')
+                }
+              />
             </div>
-            <div className="flex items-center justify-start">
-              <a
-                target="_blank"
-                href="https://chargebee.com"
-                rel="noreferrer"
-                aria-label="chargebee.com Link"
-              >
-                <img
-                  src="/chargebee.svg"
-                  alt="chargebee.com Logo"
-                  className="h-14 text-white"
-                />
-              </a>
-            </div>
-            <div className="flex items-center justify-start">
-              <a
-                target="_blank"
-                href="https://github.com"
-                rel="noreferrer"
-                aria-label="github.com Link"
-              >
-                <img
-                  src="/github.svg"
-                  alt="github.com Logo"
-                  className="h-8 text-white"
-                />
-              </a>
-            </div>
+            <p className="text-3xl font-bold text-gray-900 my-3">
+              £12.49{' '}
+              <span className="text-base font-normal text-gray-600">/ 1 issue</span>
+            </p>
+            <p className="text-sm text-gray-600 mb-6">(Delivery included)</p>
+            <a
+              href="#"
+              className="subscribe-button text-white font-semibold py-3 px-8 rounded-md w-full text-lg hover:shadow-xl mt-auto"
+            >
+              Buy an issue
+            </a>
+            <a
+              href="#"
+              className="text-sm text-gray-500 hover:text-gray-800 mt-4 underline"
+            >
+              Find out more
+            </a>
           </div>
+
+          {/* Print Subscription */}
+          <div className="card rounded-lg p-6 flex flex-col items-center text-center relative border-2 pc-gamer-red-border shadow-2xl">
+            <div className="great-value-banner">Great Value</div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2 mt-5">Print</h3>
+            <p className="text-sm text-gray-600 mb-1">
+              (Print magazine delivered to your door)
+            </p>
+            <p className="text-xs pc-gamer-red-text font-semibold mb-4">
+              Includes digital access
+            </p>
+            <div className="magazine-placeholder my-4">
+              <img
+                src="https://i.imgur.com/L6VkG2f.png"
+                alt="PC Gamer Print Edition Magazine Cover"
+                className="rounded shadow-lg mx-auto"
+                onError={(e) =>
+                  ((e.target as HTMLImageElement).src =
+                    'https://placehold.co/180x250/e0e0e0/777777?text=Image+Error')
+                }
+              />
+            </div>
+            <p className="text-3xl font-bold text-gray-900 my-1">
+              £8.92{' '}
+              <span className="text-base font-normal text-gray-600">/ issue</span>
+            </p>
+            <p className="text-sm text-gray-600 mb-3">
+              (Billed at £25.99 per quarter / 3 issues)
+            </p>
+
+            <div className="payment-plan-box p-3 rounded-md w-full my-3 text-left">
+              <p className="text-sm font-semibold text-gray-800">
+                Confirm payment plan:
+              </p>
+              <p className="text-xs text-gray-700">
+                Rolling subscription (Cancel online at any time)
+              </p>
+            </div>
+
+            <a
+              href="https://futuresandbox-test.chargebee.com/pages/v4/cAYcdHooPxNWgNpP9ccdxGWqCj3G9NCYWX/?signature=XqCXcucujaPqgpKRS6Dcdxvv8AVupstUYIQ"
+              target="_blank"
+              rel="noreferrer"
+              className="subscribe-button text-white font-semibold py-3 px-8 rounded-md w-full text-lg hover:shadow-xl mt-auto"
+            >
+              Subscribe to Print
+            </a>
+          </div>
+
+          {/* Digital Subscription */}
+          <div className="card rounded-lg p-6 flex flex-col items-center text-center relative">
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">Digital</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              (Instant digital access on iOS or Android)
+            </p>
+            <div className="magazine-placeholder my-4">
+              <img
+                src="https://i.imgur.com/48W55x2.png"
+                alt="PC Gamer Digital Edition Magazine Cover"
+                className="rounded shadow-lg mx-auto"
+                onError={(e) =>
+                  ((e.target as HTMLImageElement).src =
+                    'https://placehold.co/180x250/e0e0e0/777777?text=Image+Error')
+                }
+              />
+            </div>
+            <p className="text-3xl font-bold text-gray-900 my-1">
+              £3.69{' '}
+              <span className="text-base font-normal text-gray-600">/ issue</span>
+            </p>
+            <p className="text-sm text-gray-600 mb-3">
+              (Billed at £11.99 per quarter / 3 issues)
+            </p>
+
+            <div className="payment-plan-box p-3 rounded-md w-full my-3 text-left">
+              <p className="text-sm font-semibold text-gray-800">
+                Confirm payment plan:
+              </p>
+              <p className="text-xs text-gray-700">
+                Rolling subscription (Cancel online at any time)
+              </p>
+            </div>
+
+            <a
+              href="https://futuresandbox-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Digital-GBP-Every-3-months&utm_source=cb-app-copy"
+              target="_blank"
+              rel="noreferrer"
+              className="subscribe-button text-white font-semibold py-3 px-8 rounded-md w-full text-lg hover:shadow-xl mt-auto"
+            >
+              Subscribe to Digital
+            </a>
+          </div>
+
         </div>
-      </div>
-    </section>
+      </main>
+
+      <footer className="text-center py-12 mt-8">
+        <p className="text-gray-500 text-sm">&copy; 2025 PC Gamer. All rights reserved. Demo page.</p>
+      </footer>
+    </>
   );
 }
