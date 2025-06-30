@@ -1,43 +1,51 @@
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
-import chargebee from "../../../lib/chargebee";
+import chargebee from "@/lib/chargebee";
 import { TRPCError } from "@trpc/server";
-import type { Context } from "../context";
 
 export const subscriptionsRouter = router({
     list: protectedProcedure
-        .query(async ({ ctx }: { ctx: Context }) => {
-            const userId = ctx.session?.user?.id;
-            if (!userId) {
+        .query(async ({ ctx }) => {
+            if (!ctx.session?.user?.id) {
                 throw new TRPCError({
                     code: "UNAUTHORIZED",
                     message: "User ID not found in session",
                 });
             }
 
-            const cb = chargebee;
-            const resp = await cb.subscription
-                .list({ "customer_id[is]": userId })
-                .request();
-            return resp.list.map((item: any) => item.subscription);
+            try {
+                const resp = await chargebee.subscription
+                    .list({ "customer_id[is]": ctx.session.user.id })
+                    .request();
+                return resp.list.map((item: any) => item.subscription);
+            } catch (error) {
+                console.error("Error fetching subscriptions:", error);
+                return [];
+            }
         }),
     portalSession: protectedProcedure
-        .mutation(async ({ ctx }: { ctx: Context }) => {
-            const userId = ctx.session?.user?.id;
-            if (!userId) {
+        .mutation(async ({ ctx }) => {
+            if (!ctx.session?.user?.id) {
                 throw new TRPCError({
                     code: "UNAUTHORIZED",
                     message: "User ID not found in session",
                 });
             }
 
-            const cb = chargebee;
-            const { portal_session } = await cb.portal_session
-                .create({
-                    customer: { id: userId },
-                    redirect_url: `${process.env.NEXT_PUBLIC_HOST}/account`,
-                })
-                .request();
-            return { url: portal_session.access_url };
+            try {
+                const { portal_session } = await chargebee.portal_session
+                    .create({
+                        customer: { id: ctx.session.user.id },
+                        redirect_url: `${process.env.NEXT_PUBLIC_HOST}/account`,
+                    })
+                    .request();
+                return { url: portal_session.access_url };
+            } catch (error) {
+                console.error("Error creating portal session:", error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Failed to create portal session",
+                });
+            }
         }),
 });

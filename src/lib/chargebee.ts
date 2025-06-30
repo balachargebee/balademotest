@@ -1,19 +1,39 @@
-import Chargebee from "chargebee";
 import { env } from "@/env/server.mjs";
 
-function initializeChargebee() {
-    // During SSG, return a mock client
-    if (process.env.NODE_ENV === "production" && !process.env.VERCEL_ENV) {
-        return new Chargebee();
+let chargebeeInstance: any = null;
+
+async function loadChargebee() {
+    if (chargebeeInstance) {
+        return chargebeeInstance;
     }
 
-    const cb = new Chargebee();
-    cb.configure({
-        site: env.NEXT_PUBLIC_CHARGEBEE_SITE,
-        api_key: env.CHARGEBEE_API_KEY,
-    });
-    return cb;
+    // During SSG, return a mock client
+    if (process.env.NODE_ENV === "production" && !process.env.VERCEL_ENV) {
+        return {
+            hosted_page: {},
+            subscription: {},
+            portal_session: {},
+        };
+    }
+
+    try {
+        // Dynamic import to handle webpack issues
+        const Chargebee = (await import("chargebee")).default;
+        const instance = Chargebee.configure({
+            site: env.NEXT_PUBLIC_CHARGEBEE_SITE,
+            api_key: env.CHARGEBEE_API_KEY,
+        });
+        chargebeeInstance = instance;
+        return instance;
+    } catch (error) {
+        console.error("Failed to initialize Chargebee:", error);
+        // Return a mock client in case of error
+        return {
+            hosted_page: {},
+            subscription: {},
+            portal_session: {},
+        };
+    }
 }
 
-const chargebee = initializeChargebee();
-export default chargebee; 
+export default await loadChargebee(); 
