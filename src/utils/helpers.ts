@@ -10,9 +10,18 @@ export const getURL = () => {
   return url;
 };
 
-export function initChargebee() {
+export function initChargebee(): ChargebeeJsInstance {
+  const site = process.env.NEXT_PUBLIC_CHARGEBEE_SITE;
+  if (!site) {
+    throw new Error('NEXT_PUBLIC_CHARGEBEE_SITE environment variable is not set');
+  }
+
+  if (typeof window === 'undefined' || !window.Chargebee) {
+    throw new Error('Chargebee is not loaded. Make sure the Chargebee script is included in your page.');
+  }
+
   return window.Chargebee.init({
-    site: process.env.NEXT_PUBLIC_CHARGEBEE_SITE,
+    site,
     isItemsModel: true,
   });
 }

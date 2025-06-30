@@ -3,6 +3,14 @@ declare interface ChargebeeJsInstance {
     createChargebeePortal: () => { open: () => void };
 }
 
+declare interface ChargebeeConstructor {
+    init: (config: {
+        site: string;
+        isItemsModel?: boolean;
+    }) => ChargebeeJsInstance;
+}
+
 interface Window {
     cbInstance?: ChargebeeJsInstance;
+    Chargebee: ChargebeeConstructor;
 } 
