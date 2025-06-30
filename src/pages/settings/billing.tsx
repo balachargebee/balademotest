@@ -49,7 +49,7 @@ export default function AccountPage() {
     });
     const cbPortal = window.cbInstance?.createChargebeePortal();
 
-    cbPortal.open();
+    cbPortal?.open();
     setLoading(false);
   };
 
