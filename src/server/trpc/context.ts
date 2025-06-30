@@ -24,10 +24,13 @@ export const createContextInner = async (
   prisma: PrismaClient;
   chargebee: ChargeBee;
 }> => {
+  // Initialize Chargebee client
+  const chargebee = await getChargebeeClient();
+
   return {
     session: opts?.session,
     prisma,
-    chargebee: getChargebeeClient(),
+    chargebee,
   };
 };
 
