@@ -6,6 +6,7 @@ export default function PCGamerLanding() {
     <>
       <Head>
         <title>PC Gamer Subscription Offers</title>
+        <meta name="description" content="Subscribe to PC Gamer Magazine - Get the latest gaming news, reviews, and insights delivered to your door." />
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap"
           rel="stylesheet"
@@ -91,7 +92,7 @@ export default function PCGamerLanding() {
 
       <main className="container mx-auto px-4 py-8">
         <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-          Choose Your Preferred Subscription Package:
+          Choose Your Preferred Subscription Package
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -108,8 +109,8 @@ export default function PCGamerLanding() {
                 alt="PC Gamer Magazine - The Witcher 3 Anniversary Special Cover"
                 className="rounded shadow-lg mx-auto"
                 onError={(e) =>
-                  ((e.target as HTMLImageElement).src =
-                    'https://placehold.co/180x250/e0e0e0/777777?text=Image+Error')
+                ((e.target as HTMLImageElement).src =
+                  'https://placehold.co/180x250/e0e0e0/777777?text=Image+Error')
                 }
               />
             </div>
@@ -148,8 +149,8 @@ export default function PCGamerLanding() {
                 alt="PC Gamer Print Edition Magazine Cover"
                 className="rounded shadow-lg mx-auto"
                 onError={(e) =>
-                  ((e.target as HTMLImageElement).src =
-                    'https://placehold.co/180x250/e0e0e0/777777?text=Image+Error')
+                ((e.target as HTMLImageElement).src =
+                  'https://placehold.co/180x250/e0e0e0/777777?text=Image+Error')
                 }
               />
             </div>
@@ -192,8 +193,8 @@ export default function PCGamerLanding() {
                 alt="PC Gamer Digital Edition Magazine Cover"
                 className="rounded shadow-lg mx-auto"
                 onError={(e) =>
-                  ((e.target as HTMLImageElement).src =
-                    'https://placehold.co/180x250/e0e0e0/777777?text=Image+Error')
+                ((e.target as HTMLImageElement).src =
+                  'https://placehold.co/180x250/e0e0e0/777777?text=Image+Error')
                 }
               />
             </div>

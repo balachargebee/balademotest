@@ -6,12 +6,12 @@ export default function Footer() {
           <span className="text-white">Crafted by</span>&nbsp;
           <a
             className="text-primary"
-            href="https://bharathvaj.me"
+            href="https://github.com/balachargebee"
             target="_blank"
             rel="noreferrer"
-            aria-label="bharathvaj.meLink"
+            aria-label="Bala's GitHub"
           >
-            Bharathvaj Ganesan
+            Bala Adhethan
           </a>
         </div>
       </div>
