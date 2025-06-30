@@ -8,7 +8,9 @@ export const clientSchema = z.object({
   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: z.string(),
   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: z.string(),
   NEXT_PUBLIC_FIREBASE_APP_ID: z.string(),
-  NEXT_PUBLIC_CHARGEBEE_SITE: z.string(),
+  NEXT_PUBLIC_CHARGEBEE_SITE: z.string({
+    required_error: "NEXT_PUBLIC_CHARGEBEE_SITE is required for Chargebee integration",
+  }).min(1, "NEXT_PUBLIC_CHARGEBEE_SITE cannot be empty"),
 });
 
 export const clientEnv = {
@@ -26,7 +28,9 @@ export const clientEnv = {
 
 // ✅ Server schema — for secrets like API keys
 export const serverSchema = z.object({
-  CHARGEBEE_API_KEY: z.string(),
+  CHARGEBEE_API_KEY: z.string({
+    required_error: "CHARGEBEE_API_KEY is required for Chargebee integration",
+  }).min(1, "CHARGEBEE_API_KEY cannot be empty"),
   CHARGEBEE_ITEM_FAMILY_ID: z.string().optional(),
   GITHUB_CLIENT_ID: z.string(),
   GITHUB_CLIENT_SECRET: z.string(),
