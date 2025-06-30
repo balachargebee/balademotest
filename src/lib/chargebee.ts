@@ -52,10 +52,10 @@ async function initializeChargebee() {
 }
 
 // Export a function that returns a promise
-export function getChargebee() {
+export async function getChargebee() {
     return initializeChargebee();
 }
 
-// Export a default mock client for SSR/SSG
-export default getMockClient();
-export default await loadChargebee(); 
+// Export a mock client for SSR/SSG
+const defaultClient = getMockClient();
+export default defaultClient; 
