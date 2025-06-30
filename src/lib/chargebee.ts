@@ -1,59 +1,60 @@
 import { env } from "@/env/server.mjs";
+import type { ChargeBee } from "chargebee-typescript";
 
-let chargebeeInstance: any = null;
+let chargebeeInstance: ChargeBee | null = null;
 
-function getMockClient() {
-    return {
-        hosted_page: {
-            checkout_new_for_items: () => ({
-                request: async () => ({ hosted_page: { url: "#" } }),
-            }),
-        },
-        subscription: {
-            list: () => ({
-                request: async () => ({ list: [] }),
-            }),
-            retrieve: () => ({
-                request: async () => ({}),
-            }),
-        },
-        portal_session: {
-            create: () => ({
-                request: async () => ({ portal_session: { access_url: "#" } }),
-            }),
-        },
-    };
-}
+const mockClient: ChargeBee = {
+    subscription: {
+        create: async () => ({ subscription: {} }),
+        list: async () => ({ list: [] }),
+        cancel: async () => ({ subscription: {} }),
+        retrieve: async () => ({ subscription: {} }),
+    },
+    hosted_page: {
+        checkout_new: async () => ({ hosted_page: { url: "#" } }),
+        checkout_existing: async () => ({ hosted_page: { url: "#" } }),
+    },
+    portal_session: {
+        create: async () => ({ portal_session: { access_url: "#" } }),
+    },
+    customer: {
+        list: async () => ({ list: [] }),
+        retrieve: async () => ({ customer: {} }),
+    },
+} as unknown as ChargeBee;
 
-async function initializeChargebee() {
+// Helper to determine if we're in a static build
+const isStaticBuild = () => {
+    return process.env.NODE_ENV === "production" && !process.env.VERCEL_ENV;
+};
+
+export async function getChargebee(): Promise<ChargeBee> {
+    // Always return mock client during static builds
+    if (isStaticBuild()) {
+        return mockClient;
+    }
+
+    // Return cached instance if available
     if (chargebeeInstance) {
         return chargebeeInstance;
     }
 
-    // During SSG, return a mock client
-    if (process.env.NODE_ENV === "production" && !process.env.VERCEL_ENV) {
-        return getMockClient();
-    }
-
     try {
-        // Dynamic import to handle webpack issues
-        const Chargebee = (await import("chargebee")).default;
-        const instance = Chargebee.configure({
+        // Import Chargebee dynamically to avoid SSG issues
+        const { default: ChargebeeSDK } = await import("chargebee");
+
+        // Configure new instance
+        const instance = ChargebeeSDK.configure({
             site: env.NEXT_PUBLIC_CHARGEBEE_SITE,
             api_key: env.CHARGEBEE_API_KEY,
         });
-        chargebeeInstance = instance;
-        return instance;
+
+        chargebeeInstance = instance as unknown as ChargeBee;
+        return chargebeeInstance;
     } catch (error) {
         console.error("Failed to initialize Chargebee:", error);
-        // Return a mock client in case of error
-        return getMockClient();
+        return mockClient;
     }
-}
-
-// Export a function that returns a promise
-export async function getChargebee() {
-    return initializeChargebee();
 }
 
 // Export a mock client for SSR/SSG

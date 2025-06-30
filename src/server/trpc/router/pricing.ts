@@ -1,10 +1,13 @@
 import { z } from "zod";
 import { router, publicProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
+import { initChargebee } from "@/server/chargebee/client";
 
 export const pricingRouter = router({
   getAllItemPrices: publicProcedure.query(async ({ ctx }) => {
     try {
+      // Initialize Chargebee client
+      await initChargebee();
       return await ctx.prisma.itemPrice.findMany();
     } catch (error) {
       console.error("Error fetching item prices:", error);
@@ -13,6 +16,8 @@ export const pricingRouter = router({
   }),
   getAllItems: publicProcedure.query(async ({ ctx }) => {
     try {
+      // Initialize Chargebee client
+      await initChargebee();
       return await ctx.prisma.item.findMany();
     } catch (error) {
       console.error("Error fetching items:", error);
@@ -29,6 +34,9 @@ export const pricingRouter = router({
     )
     .query(async ({ input, ctx }) => {
       try {
+        // Initialize Chargebee client
+        await initChargebee();
+
         const itemPrice = await ctx.prisma.itemPrice.findUnique({
           where: {
             id: input.itemPriceId,
