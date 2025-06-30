@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
-import chargebee from "@/lib/chargebee";
+import { getChargebee } from "@/lib/chargebee";
 import { TRPCError } from "@trpc/server";
 
 export const checkoutRouter = router({
@@ -15,6 +15,7 @@ export const checkoutRouter = router({
             }
 
             try {
+                const chargebee = await getChargebee();
                 const idempotencyKey = `${ctx.session.user.id}-${input.planId}`;
                 const { hosted_page } = await chargebee.hosted_page.checkout_new_for_items({
                     subscription_items: [{ item_price_id: input.planId, quantity: 1 }],

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
-import chargebee from "@/lib/chargebee";
+import { getChargebee } from "@/lib/chargebee";
 import { TRPCError } from "@trpc/server";
 
 export const subscriptionsRouter = router({
@@ -14,6 +14,7 @@ export const subscriptionsRouter = router({
             }
 
             try {
+                const chargebee = await getChargebee();
                 const resp = await chargebee.subscription
                     .list({ "customer_id[is]": ctx.session.user.id })
                     .request();
@@ -33,6 +34,7 @@ export const subscriptionsRouter = router({
             }
 
             try {
+                const chargebee = await getChargebee();
                 const { portal_session } = await chargebee.portal_session
                     .create({
                         customer: { id: ctx.session.user.id },

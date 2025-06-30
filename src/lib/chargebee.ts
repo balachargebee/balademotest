@@ -2,18 +2,37 @@ import { env } from "@/env/server.mjs";
 
 let chargebeeInstance: any = null;
 
-async function loadChargebee() {
+function getMockClient() {
+    return {
+        hosted_page: {
+            checkout_new_for_items: () => ({
+                request: async () => ({ hosted_page: { url: "#" } }),
+            }),
+        },
+        subscription: {
+            list: () => ({
+                request: async () => ({ list: [] }),
+            }),
+            retrieve: () => ({
+                request: async () => ({}),
+            }),
+        },
+        portal_session: {
+            create: () => ({
+                request: async () => ({ portal_session: { access_url: "#" } }),
+            }),
+        },
+    };
+}
+
+async function initializeChargebee() {
     if (chargebeeInstance) {
         return chargebeeInstance;
     }
 
     // During SSG, return a mock client
     if (process.env.NODE_ENV === "production" && !process.env.VERCEL_ENV) {
-        return {
-            hosted_page: {},
-            subscription: {},
-            portal_session: {},
-        };
+        return getMockClient();
     }
 
     try {
@@ -28,12 +47,15 @@ async function loadChargebee() {
     } catch (error) {
         console.error("Failed to initialize Chargebee:", error);
         // Return a mock client in case of error
-        return {
-            hosted_page: {},
-            subscription: {},
-            portal_session: {},
-        };
+        return getMockClient();
     }
 }
 
+// Export a function that returns a promise
+export function getChargebee() {
+    return initializeChargebee();
+}
+
+// Export a default mock client for SSR/SSG
+export default getMockClient();
 export default await loadChargebee(); 
