@@ -9,13 +9,8 @@ import {
   createContextInner,
 } from "@/server/trpc/context";
 
-interface Props {
-  items: Item[];
-  itemPrices: ItemPrice[];
-}
-
-export default function PricingPage({ items, itemPrices }: Props) {
-  return <Pricing items={items} itemPrices={itemPrices} />;
+export default function PricingPage() {
+  return <Pricing />;
 }
 
 export async function getStaticProps(
