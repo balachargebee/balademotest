@@ -7,7 +7,7 @@ export const subscriptionsRouter = router({
         .query(async ({ ctx }) => {
             const cb = chargebee;
             const resp = await cb.subscription
-                .list({ "customer_id[is]": ctx.auth.userId })
+                .list({ "customer_id[is]": ctx.session!.user!.id })
                 .request();
             return resp.list.map((item: any) => item.subscription);
         }),
@@ -16,10 +16,10 @@ export const subscriptionsRouter = router({
             const cb = chargebee;
             const { portal_session } = await cb.portal_session
                 .create({
-                    customer: { id: ctx.auth.userId },
+                    customer: { id: ctx.session!.user!.id },
                     redirect_url: `${process.env.NEXT_PUBLIC_HOST}/account`,
                 })
                 .request();
             return { url: portal_session.access_url };
         }),
-}); 
+});
