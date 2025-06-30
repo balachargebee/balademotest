@@ -8,9 +8,11 @@ import { useEffect } from "react";
  * Extend later if you add more columns.
  */
 interface SubscriptionRow {
-  id: string;
-  plan_id: string;
-  status: string;
+    id: string;
+    plan_id: string;
+    status: string;
+    /** Unix seconds timestamp of the next billing date (null when N/A) */
+    next_billing_at?: number | null;
 }
 
 export default function Account() {
