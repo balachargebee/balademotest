@@ -24,11 +24,23 @@ export const createContextInner = async (
   prisma: PrismaClient;
   chargebee: ChargeBee;
 }> => {
-  return {
-    session: opts?.session,
-    prisma,
-    chargebee,
-  };
+  try {
+    return {
+      session: opts?.session,
+      prisma,
+      chargebee,
+    };
+  } catch (error) {
+    // If Chargebee initialization fails during SSG, return a minimal context
+    if (process.env.NODE_ENV === "production" && !process.env.VERCEL_ENV) {
+      return {
+        session: opts?.session,
+        prisma,
+        chargebee: {} as ChargeBee, // Provide empty object during SSG
+      };
+    }
+    throw error;
+  }
 };
 
 /**

@@ -16,30 +16,43 @@ export default function PricingPage() {
 export async function getStaticProps(
   context: CreateContextOptions
 ): Promise<GetStaticPropsResult<any>> {
-  const ctx = await createContextInner(context);
-  const ssg = await createProxySSGHelpers({
-    router: appRouter,
-    ctx,
-    transformer: superjson,
-  });
-
-  let items: Item[] = [];
-  let itemPrices: ItemPrice[] = [];
-
   try {
-    [items, itemPrices] = await Promise.all([
-      ssg.pricing.getAllItems.fetch(),
-      ssg.pricing.getAllItemPrices.fetch(),
-    ]);
-  } catch (error) {
-    console.error("❌ Error fetching pricing data:", error);
-  }
+    const ctx = await createContextInner(context);
+    const ssg = await createProxySSGHelpers({
+      router: appRouter,
+      ctx,
+      transformer: superjson,
+    });
 
-  return {
-    props: {
-      items,
-      itemPrices,
-    },
-    revalidate: 3600,
-  };
+    let items: Item[] = [];
+    let itemPrices: ItemPrice[] = [];
+
+    try {
+      [items, itemPrices] = await Promise.all([
+        ssg.pricing.getAllItems.fetch(),
+        ssg.pricing.getAllItemPrices.fetch(),
+      ]);
+    } catch (error) {
+      console.error("❌ Error fetching pricing data:", error);
+    }
+
+    return {
+      props: {
+        items,
+        itemPrices,
+        trpcState: ssg.dehydrate(),
+      },
+      revalidate: 3600,
+    };
+  } catch (error) {
+    // If context creation fails during SSG, return empty data
+    console.error("❌ Error creating context:", error);
+    return {
+      props: {
+        items: [],
+        itemPrices: [],
+      },
+      revalidate: 3600,
+    };
+  }
 }
