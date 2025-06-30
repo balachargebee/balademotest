@@ -16,7 +16,11 @@ export const subscriptionsRouter = router({
             try {
                 const chargebee = await getChargebee();
                 const resp = await chargebee.subscription
-                    .list({ "customer_id[is]": ctx.session.user.id })
+                    .list({
+                        "customer_id": ctx.session.user.id,
+                        "limit": 100,
+                        "sort_by[desc]": "created_at"
+                    })
                     .request();
                 return resp.list.map((item: any) => item.subscription);
             } catch (error) {
