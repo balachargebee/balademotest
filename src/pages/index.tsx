@@ -1,6 +1,6 @@
 import Head from "next/head";
-import { Navbar } from "../components/ui/Navbar";
-import { Footer } from "../components/ui/Footer";
+import Navbar from "../components/ui/Navbar";
+import Footer from "../components/ui/Footer";
 import { trpc } from "../utils/trpc";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
