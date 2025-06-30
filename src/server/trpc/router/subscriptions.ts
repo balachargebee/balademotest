@@ -2,6 +2,7 @@ import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
 import { getChargebee } from "@/lib/chargebee";
 import { TRPCError } from "@trpc/server";
+import type { subscription_list_params } from "chargebee-typescript";
 
 export const subscriptionsRouter = router({
     list: protectedProcedure
@@ -15,12 +16,17 @@ export const subscriptionsRouter = router({
 
             try {
                 const chargebee = await getChargebee();
+                const params: subscription_list_params = {
+                    customer_id: {
+                        is: ctx.session.user.id
+                    },
+                    limit: 100,
+                    sort_by: {
+                        desc: "created_at"
+                    }
+                };
                 const resp = await chargebee.subscription
-                    .list({
-                        "customer_id": ctx.session.user.id,
-                        "limit": 100,
-                        "sort_by[desc]": "created_at"
-                    })
+                    .list(params)
                     .request();
                 return resp.list.map((item: any) => item.subscription);
             } catch (error) {
