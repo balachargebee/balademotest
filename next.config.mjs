@@ -21,9 +21,21 @@ const config = {
       },
     ];
   },
-  env: {
-    NEXT_PUBLIC_DIGITAL_PLAN_ID: process.env.DIGITAL_PLAN_ID,
-    NEXT_PUBLIC_PRINT_PLAN_ID: process.env.PRINT_PLAN_ID,
-  },
+  /**
+   * Env variables that MUST be present at build‑time.
+   * We fail fast here instead of shipping a broken build.
+   */
+  env: (() => {
+    const required = ['DIGITAL_PLAN_ID', 'PRINT_PLAN_ID'];
+    for (const key of required) {
+      if (!process.env[key]) {
+        throw new Error(`[next.config] Missing env variable: ${key}`);
+      }
+    }
+    return {
+      NEXT_PUBLIC_DIGITAL_PLAN_ID: String(process.env.DIGITAL_PLAN_ID),
+      NEXT_PUBLIC_PRINT_PLAN_ID: String(process.env.PRINT_PLAN_ID),
+    };
+  })(),
 };
 export default config;
