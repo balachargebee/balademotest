@@ -3,6 +3,16 @@ import { useRouter } from "next/router";
 import { trpc } from "../utils/trpc";
 import { useEffect } from "react";
 
+/**
+ * Minimal shape of a Chargebee subscription the page needs.
+ * Extend later if you add more columns.
+ */
+interface SubscriptionRow {
+  id: string;
+  plan_id: string;
+  status: string;
+}
+
 export default function Account() {
     const { data: session, status } = useSession();
     const router = useRouter();
@@ -45,7 +55,7 @@ export default function Account() {
                     </tr>
                 </thead>
                 <tbody>
-                    {subscriptions.map((sub) => (
+                    {subscriptions.map((sub: SubscriptionRow) => (
                         <tr key={sub.id} className="border-t border-white/20">
                             <td className="px-4 py-2">{sub.plan_id}</td>
                             <td className="px-4 py-2">{sub.status}</td>
