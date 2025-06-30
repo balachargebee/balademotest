@@ -4,7 +4,7 @@ import { type Session } from "next-auth";
 
 import { getServerAuthSession } from "../common/get-server-auth-session";
 import { prisma } from "@/server/db/client";
-import { chargebee } from "@/server/chargebee/client";
+import { getChargebeeClient } from "@/server/chargebee/client";
 import type { PrismaClient } from "@prisma/client";
 import type { ChargeBee } from "chargebee-typescript";
 
@@ -24,23 +24,11 @@ export const createContextInner = async (
   prisma: PrismaClient;
   chargebee: ChargeBee;
 }> => {
-  try {
-    return {
-      session: opts?.session,
-      prisma,
-      chargebee,
-    };
-  } catch (error) {
-    // If Chargebee initialization fails during SSG, return a minimal context
-    if (process.env.NODE_ENV === "production" && !process.env.VERCEL_ENV) {
-      return {
-        session: opts?.session,
-        prisma,
-        chargebee: {} as ChargeBee, // Provide empty object during SSG
-      };
-    }
-    throw error;
-  }
+  return {
+    session: opts?.session,
+    prisma,
+    chargebee: getChargebeeClient(),
+  };
 };
 
 /**
