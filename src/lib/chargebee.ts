@@ -57,6 +57,5 @@ export async function getChargebee(): Promise<ChargeBee> {
     }
 }
 
-// Export a mock client for SSR/SSG
-const defaultClient = getMockClient();
-export default defaultClient; 
+// Export mock client as default for SSR/SSG
+export default mockClient; 
