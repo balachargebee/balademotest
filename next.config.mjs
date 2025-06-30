@@ -21,5 +21,9 @@ const config = {
       },
     ];
   },
+  env: {
+    NEXT_PUBLIC_DIGITAL_PLAN_ID: process.env.DIGITAL_PLAN_ID,
+    NEXT_PUBLIC_PRINT_PLAN_ID: process.env.PRINT_PLAN_ID,
+  },
 };
 export default config;
