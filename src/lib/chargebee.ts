@@ -1,12 +1,19 @@
-import chargebee from "chargebee";
+import Chargebee from "chargebee";
+import { env } from "@/env/server.mjs";
 
-if (!process.env.CHARGEBEE_SITE || !process.env.CHARGEBEE_API_KEY) {
-    throw new Error("Chargebee environment variables are not set");
+function initializeChargebee() {
+    // During SSG, return a mock client
+    if (process.env.NODE_ENV === "production" && !process.env.VERCEL_ENV) {
+        return new Chargebee();
+    }
+
+    const cb = new Chargebee();
+    cb.configure({
+        site: env.NEXT_PUBLIC_CHARGEBEE_SITE,
+        api_key: env.CHARGEBEE_API_KEY,
+    });
+    return cb;
 }
 
-chargebee.configure({
-    site: process.env.CHARGEBEE_SITE!,
-    api_key: process.env.CHARGEBEE_API_KEY!,
-});
-
+const chargebee = initializeChargebee();
 export default chargebee; 
